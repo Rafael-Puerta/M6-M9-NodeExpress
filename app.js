@@ -1,12 +1,10 @@
 const express = require('express')
 const fs = require('fs/promises')
-const https = require('https')
-var mysql = require('mysql2');
 const url = require('url')
-const { v4: uuidv4 } = require('uuid')
 const post = require('./post.js')
+const { v4: uuidv4 } = require('uuid')
 
-// Iniciar servidors HTTP
+// Iniciar servidors HTTP i WebSockets
 const app = express()
 
 // Configurar el port del servidor HTTP
@@ -18,7 +16,7 @@ app.use(express.static('public'))
 // Activar el servidor HTTP
 const httpServer = app.listen(port, appListen)
 function appListen () {
-  console.log(`Example app listening for HTTP queries on: ${port}`)
+  console.log(`Example app listening for HTTP queries on ${port}`)
 }
 
 // Definir URLs del servidor HTTP
@@ -31,7 +29,7 @@ async function getIndex (req, res) {
 // Definir URL per les dades tipus POST
 app.post('/dades', getDades)
 async function getDades (req, res) {
-  let receivedPOST = await post.getPostData(req)
+  let receivedPOST = await post.getPostObject(req)
   let result = {};
 
   if (receivedPOST) {
@@ -45,8 +43,11 @@ async function getDades (req, res) {
       result = { result: `Has demanat fer un broadcast del missatge: ${receivedPOST.text}` }
       broadcast({ type: "broadcastResponse", text: receivedPOST.text })
     }
-    if (receivedPOST.type == "listTables") {
-      result = { result: await queryDatabase(`SHOW TABLES`) }
+    if (receivedPOST.type == "imageUpload") {
+      const fileBuffer = Buffer.from(receivedPOST.base64, 'base64')
+      await fs.mkdir("./public", { recursive: true }) // Crea el directori si no existeix
+      await fs.writeFile(`./public/${receivedPOST.name}`, fileBuffer)
+      result = { result: `S'ha guardat la imatge: ${receivedPOST.name}` }
     }
   }
 
@@ -54,10 +55,11 @@ async function getDades (req, res) {
   res.end(JSON.stringify(result))
 }
 
+const portWS = 8888
 const WebSocket = require('ws')
 const wss = new WebSocket.Server({ server: httpServer })
 const socketsClients = new Map()
-console.log(`Example app listening for WebSocket queries on: http://localhost:${port}`)
+console.log(`Example app listening for WebSocket queries on ${portWS}`)
 
 
 wss.on('connection', (ws) => {
@@ -101,27 +103,4 @@ async function broadcast (obj) {
       client.send(messageAsString)
     }
   })
-}
-
-// Get the list of database tables from mysql
-
-function queryDatabase (query) {
-
-    return new Promise((resolve, reject) => {
-      var connection = mysql.createConnection({
-        host: process.env.MYSQLHOST || "containers-us-west-176.railway.app",
-        port: process.env.MYSQLPORT || 6804,
-        user: process.env.MYSQLUSER || "root",
-        password: process.env.MYSQLPASSWORD || "pFP3VdyyH1qnwFee3tW1",
-        database: process.env.MYSQLDATABASE || "railway"
-      });
-   
-      connection.query(query, (error, results) => {
-        if (error) reject(error);
-        console.log(results)
-        resolve(results)
-      });
-      
-      connection.end();
-    })
 }

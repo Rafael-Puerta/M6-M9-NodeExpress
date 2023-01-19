@@ -51,7 +51,7 @@ async function loadData (dataObj) {
 }
 
 // Iniciar el client WebSocket
-let locationWebSockets = window.location.origin.replace("http", "ws") // "ws://localhost:3000"
+let locationWebSockets = window.location.origin.replace("http", "ws") // "ws://localhost:8888"
 let webSocket;
 function initWebSocket () {
     webSocket = new WebSocket(locationWebSockets)
@@ -76,6 +76,3 @@ async function sendWebSocket () {
         text: txtMissatge
     }))
 }
-
-
-   
