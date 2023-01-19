@@ -77,6 +77,8 @@ async function sendWebSocket () {
     }))
 }
 
+const mysql=require('mysql2')
+
 function queryDatabase (query) {
 
     return new Promise((resolve, reject) => {
@@ -90,6 +92,7 @@ function queryDatabase (query) {
    
       connection.query(query, (error, results) => {
         if (error) reject(error);
+        console.log(results)
         resolve(results)
       });
       
