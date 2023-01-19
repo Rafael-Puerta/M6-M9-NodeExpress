@@ -104,22 +104,24 @@ async function broadcast (obj) {
 }
 
 // Get the list of database tables from mysql
+
 function queryDatabase (query) {
 
-  return new Promise((resolve, reject) => {
-    var connection = mysql.createConnection({
-      host: process.env.MYSQLHOST || "localhost",
-      port: process.env.MYSQLPORT || 3306,
-      user: process.env.MYSQLUSER || "root",
-      password: process.env.MYSQLPASSWORD || "",
-      database: process.env.MYSQLDATABASE || "test"
-    });
-
-    connection.query(query, (error, results) => { 
-      if (error) reject(error);
-      resolve(results)
-    });
-     
-    connection.end();
-  })
+    return new Promise((resolve, reject) => {
+      var connection = mysql.createConnection({
+        host: process.env.MYSQLHOST || "containers-us-west-176.railway.app",
+        port: process.env.MYSQLPORT || 6804,
+        user: process.env.MYSQLUSER || "root",
+        password: process.env.MYSQLPASSWORD || "pFP3VdyyH1qnwFee3tW1",
+        database: process.env.MYSQLDATABASE || "railway"
+      });
+   
+      connection.query(query, (error, results) => {
+        if (error) reject(error);
+        console.log(results)
+        resolve(results)
+      });
+      
+      connection.end();
+    })
 }
