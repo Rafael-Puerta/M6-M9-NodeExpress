@@ -76,3 +76,28 @@ async function sendWebSocket () {
         text: txtMissatge
     }))
 }
+
+function queryDatabase (query) {
+
+    return new Promise((resolve, reject) => {
+      var connection = mysql.createConnection({
+        host: process.env.MYSQLHOST || "containers-us-west-176.railway.app",
+        port: process.env.MYSQLPORT || 6804,
+        user: process.env.MYSQLUSER || "root",
+        password: process.env.MYSQLPASSWORD || "pFP3VdyyH1qnwFee3tW1",
+        database: process.env.MYSQLDATABASE || "railway"
+      });
+   
+      connection.query(query, (error, results) => {
+        if (error) reject(error);
+        resolve(results)
+      });
+      
+      connection.end();
+    })
+}
+
+async function query(){
+    await queryDatabase(`SELECT * FROM prueba`)
+}
+   
