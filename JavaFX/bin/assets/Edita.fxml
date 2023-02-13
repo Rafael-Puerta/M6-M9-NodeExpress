@@ -99,7 +99,7 @@
                   <Image url="@../eclipse-workspace/M06/img/x-mark.png" />
                </image>
             </ImageView>
-            <Button defaultButton="true" layoutX="81.0" layoutY="16.0" mnemonicParsing="false" onAction="#back" text="&lt;&lt;" />
+            <Button defaultButton="true" layoutX="36.0" layoutY="16.0" mnemonicParsing="false" onAction="#back" text="&lt;&lt;" />
             <ProgressIndicator fx:id="loading" layoutX="528.0" layoutY="161.0" visible="false" />
          </children>
       </AnchorPane>

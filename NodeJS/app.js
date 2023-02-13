@@ -14,7 +14,7 @@ function wait (ms) {
 const app = express()
 
 // Set port number
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 3030
 
 // Publish static files from 'public' folder
 app.use(express.static('public'))
@@ -25,40 +25,33 @@ function appListen () {
   console.log(`Listening for HTTP queries on: http://localhost:${port}`)
 }
 
+process.on("SIGINT", () => {
+  console.log("Closing http server");
+  httpServer.close()
+})
+
 // Set URL rout for POST queries
 app.post('/dades', getDades)
 async function getDades (req, res) {
   let receivedPOST = await post.getPostObject(req)
   let result = { status: "KO", result: "Unkown type" }
 
-  var textFile = await fs.readFile("./public/consoles/consoles-list.json", { encoding: 'utf8'})
-  var objConsolesList = JSON.parse(textFile)
-
   if (receivedPOST) {
-    if (receivedPOST.type == "consola") {
-      var objFilteredList = objConsolesList.filter((obj) => { return obj.name == receivedPOST.name })
-      await wait(1500)
-      if (objFilteredList.length > 0) {
-        result = { status: "OK", result: objFilteredList[0] }
-      }
+    if (receivedPOST.type == "ping") {
+
+      result = { status: "OK", result: "" }
+      await wait(1000)
     }
-    if (receivedPOST.type == "marques") {
-      var objBrandsList = objConsolesList.map((obj) => { return obj.brand })
-      await wait(1500)
-      let senseDuplicats = [...new Set(objBrandsList)]
-      result = { status: "OK", result: senseDuplicats.sort() } 
+    else if(receivedPOST.type == "users"){
+      result = { status: "OK", result: [{name:"tes",id:"1"},{name:"test",id:"2"}] }
+      await wait(1000)
     }
-    if (receivedPOST.type == "marca") {
-      var objBrandConsolesList = objConsolesList.filter ((obj) => { return obj.brand == receivedPOST.name })
-      await wait(1500)
-      // Ordena les consoles per nom de model
-      objBrandConsolesList.sort((a,b) => { 
-          var textA = a.name.toUpperCase();
-          var textB = b.name.toUpperCase();
-          return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
-      })
-      result = { status: "OK", result: objBrandConsolesList } 
+    else if(receivedPOST.type == "user"){
+      console.log(receivedPOST.name); // use this for query (id)
+      result = { status: "OK", result: {name:"tes",surname:"1",phone:"222222",city:"cornella",direction:"calle falsa nº 4",mail:"test@quepasha.com"} }
+      await wait(1000)
     }
+    
   }
 
   res.writeHead(200, { 'Content-Type': 'application/json' })

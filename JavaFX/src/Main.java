@@ -1,10 +1,6 @@
-import org.json.JSONObject;
-
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
@@ -12,7 +8,7 @@ public class Main extends Application {
 
     public static UtilsWS socketClient;
 
-    public static int port = 3000;
+    public static int port = 3001;
     public static String protocol = "http";
     public static String host = "localhost";
     public static String protocolWS = "ws";
@@ -32,17 +28,17 @@ public class Main extends Application {
     public static void main(String[] args) {
 
         // Iniciar WebSockets
-        socketClient = UtilsWS.getSharedInstance(protocolWS + "://" + host + ":" + port);
-        socketClient.onMessage((response) -> {
+        // socketClient = UtilsWS.getSharedInstance(protocolWS + "://" + host + ":" + port);
+        // socketClient.onMessage((response) -> {
             
-            // JavaFX necessita que els canvis es facin des de el thread principal
-            Platform.runLater(()->{ 
-                // Fer aquí els canvis a la interficie
-                JSONObject msgObj = new JSONObject(response);
-                Controller1 ctrl = (Controller1) UtilsViews.getController("View1");
-                ctrl.receiveMessage(msgObj);
-            });
-        });
+        //     // JavaFX necessita que els canvis es facin des de el thread principal
+        //     Platform.runLater(()->{ 
+        //         // Fer aquí els canvis a la interficie
+        //         JSONObject msgObj = new JSONObject(response);
+        //         Controller1 ctrl = (Controller1) UtilsViews.getController("View1");
+        //         ctrl.receiveMessage(msgObj);
+        //     });
+        // });
 
         // Iniciar app JavaFX   
         launch(args);
@@ -51,13 +47,19 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) throws Exception {
 
-        final int windowWidth = 800;
-        final int windowHeight = 600;
+        final int windowWidth = 400;
+        final int windowHeight = 400;
 
         UtilsViews.parentContainer.setStyle("-fx-font: 14 arial;");
-        UtilsViews.addView(getClass(), "View0", "./assets/view0.fxml");
-        UtilsViews.addView(getClass(), "View1", "./assets/view1.fxml");
 
+        UtilsViews.addView(getClass(), "login", "./assets/login.fxml");
+        UtilsViews.addView(getClass(), "llist", "./assets/Llista.fxml");
+        UtilsViews.addView(getClass(), "add", "./assets/Form.fxml");
+        UtilsViews.addView(getClass(), "edit", "./assets/Edita.fxml");
+        // UtilsViews.addView(getClass(), "procesadors", "./assets/procesadors.fxml");
+        // UtilsViews.addView(getClass(), "consoles", "./assets/consoles.fxml");        
+        // UtilsViews.addView(getClass(), "dades", "./assets/dades.fxml");
+        
         Scene scene = new Scene(UtilsViews.parentContainer);
         
         stage.setScene(scene);
@@ -67,16 +69,14 @@ public class Main extends Application {
         stage.setMinHeight(windowHeight);
         stage.show();
 
-        // Add icon only if not Mac
-        if (!System.getProperty("os.name").contains("Mac")) {
-            Image icon = new Image("file:./assets/icon.png");
-            stage.getIcons().add(icon);
-        }
+        // Image icon = new Image("file:./assets/icon.png");
+        // stage.getIcons().add(icon);
     }
 
     @Override
     public void stop() { 
-        socketClient.close();
+        // socketClient.close();
+        
         System.exit(1); // Kill all executor services
     }
 }
