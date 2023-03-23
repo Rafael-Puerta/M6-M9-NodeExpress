@@ -43,12 +43,31 @@ async function getDades (req, res) {
       await wait(1000)
     }
     else if(receivedPOST.type == "users"){
-      result = { status: "OK", result: [{name:"tes",id:"1"},{name:"test",id:"2"}] }
+      let fetch=await queryDatabase('SELECT * FROM Usuaris')
+      result = { status: "OK", result: fetch }
       await wait(1000)
     }
     else if(receivedPOST.type == "user"){
-      console.log(receivedPOST.name); // use this for query (id)
-      result = { status: "OK", result: {name:"tes",surname:"1",phone:"222222",city:"cornella",direction:"calle falsa nº 4",mail:"test@quepasha.com"} }
+      // console.log(receivedPOST.name); // use this for query (id)
+      if(receivedPOST.name){
+        let fetch=await queryDatabase(`SELECT * FROM Usuaris Where id='${receivedPOST.name}'`)
+        result = { status: "OK", result: fetch[0] }
+      }
+      await wait(1000)
+    }
+    else if(receivedPOST.type == "add"){
+      // result = { status: "OK", result: [{name:"tes",id:"1"},{name:"test",id:"2"}] }
+      await queryDatabase(`INSERT INTO Usuaris (city,name,surname,direction,mail,phone) VALUES ('${receivedPOST.city}','${receivedPOST.name}','${receivedPOST.surname}','${receivedPOST.direction}','${receivedPOST.mail}','${receivedPOST.phone}')`)
+      result={ status: "OK", result: "" }
+      await wait(1000)
+    }
+    else if(receivedPOST.type == "edit"){
+      // result = { status: "OK", result: [{name:"tes",id:"1"},{name:"test",id:"2"}] }
+      let fetch=await queryDatabase(`SELECT * FROM Usuaris Where id='${receivedPOST.id}'`)
+      if(fetch){
+        await queryDatabase(`UPDATE Usuaris SET city='${receivedPOST.city}',name='${receivedPOST.name}',surname='${receivedPOST.surname}',direction='${receivedPOST.direction}',mail='${receivedPOST.mail}',phone='${receivedPOST.phone}' Where id='${receivedPOST.id}'`)
+        result={ status: "OK", result: "" }
+      }
       await wait(1000)
     }
     
@@ -143,13 +162,14 @@ async function private (obj) {
 // Perform a query to the database
 function queryDatabase (query) {
 
+  // TODO change url to the railway database
   return new Promise((resolve, reject) => {
     var connection = mysql.createConnection({
-      host: process.env.MYSQLHOST || "localhost",
-      port: process.env.MYSQLPORT || 3306,
+      host: process.env.MYSQLHOST || "containers-us-west-205.railway.app",
+      port: process.env.MYSQLPORT || 5631,
       user: process.env.MYSQLUSER || "root",
-      password: process.env.MYSQLPASSWORD || "",
-      database: process.env.MYSQLDATABASE || "test"
+      password: process.env.MYSQLPASSWORD || "LGgH18MopgWeHFNW9WRF",
+      database: process.env.MYSQLDATABASE || "railway"
     });
 
     connection.query(query, (error, results) => { 

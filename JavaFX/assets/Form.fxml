@@ -75,7 +75,7 @@
                   <Font name="Rubik Bold Italic" size="27.0" />
                </font>
             </Label>
-            <Button layoutX="275.0" layoutY="306.0" mnemonicParsing="false" onAction="#send" text="ENVIA" />
+            <Button fx:id="button" layoutX="275.0" layoutY="306.0" mnemonicParsing="false" onAction="#send" text="ENVIA" />
             <Button defaultButton="true" layoutX="14.0" layoutY="5.0" mnemonicParsing="false" onAction="#back" text="&lt;&lt;" />
             <ProgressIndicator fx:id="loading" layoutX="509.0" layoutY="145.0" visible="false" />
          </children>

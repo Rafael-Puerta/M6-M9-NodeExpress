@@ -42,7 +42,7 @@ public class ControllerList {
                 
                     // Fill template with console information
                     itemController.setTitle(console.getString("name"));
-                    itemController.setId(console.getString("id"));
+                    itemController.setId(String.valueOf(console.getInt("id")));
                     
                     // Add template to the list
                     yPane.getChildren().add(itemTemplate);
