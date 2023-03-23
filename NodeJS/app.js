@@ -172,6 +172,7 @@ function queryDatabase (query) {
       database: process.env.MYSQLDATABASE || "railway"
     });
 
+    
     connection.query(query, (error, results) => { 
       if (error) reject(error);
       resolve(results)
